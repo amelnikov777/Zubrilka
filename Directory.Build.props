@@ -1,0 +1,30 @@
+<Project>
+
+  <!--
+    Machine-portable Android toolchain paths.
+
+    We installed the Android SDK and JDK under %LOCALAPPDATA%\Android via:
+      dotnet build -t:InstallAndroidDependencies -f net10.0-android \
+        -p:AndroidSdkDirectory=%LOCALAPPDATA%\Android\Sdk \
+        -p:JavaSdkDirectory=%LOCALAPPDATA%\Android\jdk \
+        -p:AcceptAndroidSDKLicenses=True
+
+    These property groups point the build at those folders WITHOUT hardcoding a
+    machine-specific absolute path (LOCALAPPDATA expands per user/machine) and
+    only when the folders actually exist. That way:
+      - on this machine the build finds the toolchain automatically;
+      - on another machine that installs to the same location, it just works;
+      - on a machine with a different setup (e.g. Visual Studio's own SDK), the
+        Exists() checks fail and normal auto-detection takes over.
+    An explicit -p:AndroidSdkDirectory=... on the command line always wins.
+  -->
+
+  <PropertyGroup Condition="'$(AndroidSdkDirectory)' == '' And Exists('$(LOCALAPPDATA)\Android\Sdk')">
+    <AndroidSdkDirectory>$(LOCALAPPDATA)\Android\Sdk</AndroidSdkDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(JavaSdkDirectory)' == '' And Exists('$(LOCALAPPDATA)\Android\jdk')">
+    <JavaSdkDirectory>$(LOCALAPPDATA)\Android\jdk</JavaSdkDirectory>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,75 @@
+# ---------------------------------------------------------------------------
+# .NET / .NET MAUI .gitignore
+# Keeps build output, IDE state, and local artifacts out of version control.
+# ---------------------------------------------------------------------------
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+
+# .NET / MSBuild
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.binlog
+project.lock.json
+project.fragment.lock.json
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+
+# Rider / ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+.nuget/
+
+# MAUI / Android build artifacts
+*.apk
+*.aab
+*.keystore
+*.jks
+*.class
+*.dex
+
+# Android signing / local config (never commit secrets)
+keystore.properties
+local.properties
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Local app data / databases produced during development
+*.db3
+*.db-shm
+*.db-wal
+*.sqlite
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Claude Code local (per-machine) settings — not shared across machines
+.claude/settings.local.json

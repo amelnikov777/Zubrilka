@@ -1,0 +1,31 @@
+# Normalize line endings across machines so switching between them
+# doesn't produce phantom whole-file diffs.
+
+# Let Git decide text vs binary, and store text with LF in the repo.
+* text=auto
+
+# Source and config files are always text (checked out with native EOL).
+*.cs        text
+*.xaml      text
+*.csproj    text
+*.sln       text -crlf
+*.json      text
+*.xml       text
+*.txt       text
+*.md        text
+*.gitignore text
+*.gitattributes text
+
+# Binary assets: never touch their bytes.
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.ttf    binary
+*.otf    binary
+*.svg    binary
+*.docx   binary
+*.xlsx   binary
+*.keystore binary
+*.jks    binary
