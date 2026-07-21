@@ -23,3 +23,6 @@ public interface IBlockImporter
 
 // [FUTURE] A GoogleSheetsBlockImporter : IBlockImporter will fetch a sheet and return the
 // same Block type, so the rest of the app (saving, playback) stays unchanged.
+
+// [FUTURE] An IBlockExporter with an XlsxBlockExporter will write a Block back out to .xlsx
+// (row 1 = language codes, one row per card), mirroring the import format above.

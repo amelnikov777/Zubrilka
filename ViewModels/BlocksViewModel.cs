@@ -127,6 +127,10 @@ public partial class BlocksViewModel : ObservableObject
         Blocks.Remove(item);
     }
 
+    // [FUTURE] Card editing: a screen to rename a block and add/edit/delete its cards.
+    // Card and Block already carry everything needed; it would save through
+    // IBlockRepository.SaveBlockWithCardsAsync, the same path import uses.
+
     /// <summary>Tap action: open the switch-box (playback setup) for the block.</summary>
     [RelayCommand]
     private void OpenSetup(BlockListItem? item)
