@@ -1,11 +1,18 @@
 using System.Windows.Input;
+using AView = Android.Views.View;
 
 namespace Zubrilka.Behaviors;
 
 /// <summary>
-/// Adds "tap" and "long-press" handling to any View using a single pointer gesture,
-/// so the two never fire together (a long-press does NOT also raise a tap on release).
-/// Replaces CommunityToolkit.Maui's TouchBehavior, which we don't take as a dependency.
+/// Adds "tap" and "long-press" handling to any View, so the two never fire together
+/// (a long-press does NOT also raise a tap on release).
+///
+/// Built on Android's native Click/LongClick rather than a PointerGestureRecognizer:
+/// on Android pointer events only report mouse/stylus input, so a finger tap never
+/// raised PointerPressed/PointerReleased and neither gesture fired. Android also
+/// suppresses the click that would follow a consumed long-click, which is exactly the
+/// semantics we want — no hold timer to manage. The long-press threshold is the
+/// platform's own (~500 ms).
 ///
 /// Usage in XAML:
 ///   &lt;Border&gt;
@@ -16,11 +23,8 @@ namespace Zubrilka.Behaviors;
 ///     &lt;/Border.Behaviors&gt;
 ///   &lt;/Border&gt;
 /// </summary>
-public class TapAndHoldBehavior : Behavior<View>
+public class TapAndHoldBehavior : PlatformBehavior<View, AView>
 {
-    // How long the press must be held to count as a long-press.
-    private static readonly TimeSpan LongPressThreshold = TimeSpan.FromMilliseconds(500);
-
     public static readonly BindableProperty TapCommandProperty =
         BindableProperty.Create(nameof(TapCommand), typeof(ICommand), typeof(TapAndHoldBehavior));
 
@@ -37,7 +41,7 @@ public class TapAndHoldBehavior : Behavior<View>
         set => SetValue(TapCommandProperty, value);
     }
 
-    /// <summary>Invoked once the press has been held past the threshold.</summary>
+    /// <summary>Invoked once the press has been held past the platform threshold.</summary>
     public ICommand? LongPressCommand
     {
         get => (ICommand?)GetValue(LongPressCommandProperty);
@@ -51,86 +55,46 @@ public class TapAndHoldBehavior : Behavior<View>
         set => SetValue(CommandParameterProperty, value);
     }
 
-    private IDispatcherTimer? _holdTimer;   // fires once if the press is held long enough
-    private bool _longPressFired;           // guards the release so tap doesn't also run
-    private View? _view;
-
-    protected override void OnAttachedTo(View bindable)
+    protected override void OnAttachedTo(View bindable, AView platformView)
     {
-        base.OnAttachedTo(bindable);
-        _view = bindable;
+        // Unlike Behavior<T>, PlatformBehavior does not inherit the view's BindingContext,
+        // so the command bindings would resolve against nothing. Mirror it here and keep it
+        // in sync — CollectionView recycles rows, so a row's context changes as the list scrolls.
+        BindingContext = bindable.BindingContext;
+        bindable.BindingContextChanged += OnBindingContextChanged;
 
-        // One pointer recognizer drives both gestures.
-        var pointer = new PointerGestureRecognizer();
-        pointer.PointerPressed += OnPressed;
-        pointer.PointerReleased += OnReleased;
-        pointer.PointerExited += OnCancelled;   // finger left the element (e.g. during a scroll)
-        bindable.GestureRecognizers.Add(pointer);
+        // A Border's platform view isn't clickable by default; opt in to both gestures.
+        platformView.Clickable = true;
+        platformView.LongClickable = true;
+        platformView.Click += OnClick;
+        platformView.LongClick += OnLongClick;
     }
 
-    protected override void OnDetachingFrom(View bindable)
+    protected override void OnDetachedFrom(View bindable, AView platformView)
     {
-        // Remove our recognizer and stop any pending timer to avoid leaks.
-        StopTimer();
-        var pointer = bindable.GestureRecognizers.OfType<PointerGestureRecognizer>().FirstOrDefault();
-        if (pointer is not null)
-        {
-            pointer.PointerPressed -= OnPressed;
-            pointer.PointerReleased -= OnReleased;
-            pointer.PointerExited -= OnCancelled;
-            bindable.GestureRecognizers.Remove(pointer);
-        }
-        _view = null;
-        base.OnDetachingFrom(bindable);
+        bindable.BindingContextChanged -= OnBindingContextChanged;
+        platformView.Click -= OnClick;
+        platformView.LongClick -= OnLongClick;
     }
 
-    private void OnPressed(object? sender, PointerEventArgs e)
+    private void OnBindingContextChanged(object? sender, EventArgs e)
     {
-        _longPressFired = false;
-
-        // Start (or restart) the hold timer on the UI dispatcher.
-        StopTimer();
-        _holdTimer = _view?.Dispatcher.CreateTimer();
-        if (_holdTimer is null)
-            return;
-
-        _holdTimer.Interval = LongPressThreshold;
-        _holdTimer.IsRepeating = false;
-        _holdTimer.Tick += (_, _) =>
-        {
-            StopTimer();
-            _longPressFired = true;
-            Invoke(LongPressCommand); // held long enough -> long-press
-        };
-        _holdTimer.Start();
+        if (sender is View view)
+            BindingContext = view.BindingContext;
     }
 
-    private void OnReleased(object? sender, PointerEventArgs e)
-    {
-        StopTimer();
-        // If the long-press already fired, swallow the release; otherwise it's a tap.
-        if (!_longPressFired)
-            Invoke(TapCommand);
-    }
+    private void OnClick(object? sender, EventArgs e) => Invoke(TapCommand);
 
-    private void OnCancelled(object? sender, PointerEventArgs e)
+    private void OnLongClick(object? sender, AView.LongClickEventArgs e)
     {
-        // Finger moved off before the threshold: neither gesture should fire.
-        StopTimer();
+        // Marking it handled stops Android from raising the trailing Click.
+        e.Handled = true;
+        Invoke(LongPressCommand);
     }
 
     private void Invoke(ICommand? command)
     {
         if (command is not null && command.CanExecute(CommandParameter))
             command.Execute(CommandParameter);
-    }
-
-    private void StopTimer()
-    {
-        if (_holdTimer is not null)
-        {
-            _holdTimer.Stop();
-            _holdTimer = null;
-        }
     }
 }

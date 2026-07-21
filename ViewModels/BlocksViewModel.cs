@@ -43,18 +43,27 @@ public partial class BlocksViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            var blocks = await _blockRepository.GetAllAsync(); // already sorted by name
-            Blocks.Clear();
-            foreach (var block in blocks)
-            {
-                var count = await _cardRepository.CountByBlockIdAsync(block.Id);
-                // Pass the shared commands so each row can bind tap/long-press directly.
-                Blocks.Add(new BlockListItem(block, count, OpenSetupCommand, DeleteCommand));
-            }
+            await ReloadBlocksAsync();
         }
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Rebuilds the list from the database. The caller owns the <see cref="IsBusy"/> guard,
+    /// so callers that are already busy (import) can refresh without being turned away.
+    /// </summary>
+    private async Task ReloadBlocksAsync()
+    {
+        var blocks = await _blockRepository.GetAllAsync(); // already sorted by name
+        Blocks.Clear();
+        foreach (var block in blocks)
+        {
+            var count = await _cardRepository.CountByBlockIdAsync(block.Id);
+            // Pass the shared commands so each row can bind tap/long-press directly.
+            Blocks.Add(new BlockListItem(block, count, OpenSetupCommand, DeleteCommand));
         }
     }
 
@@ -96,7 +105,7 @@ public partial class BlocksViewModel : ObservableObject
             }
 
             await _blockRepository.SaveBlockWithCardsAsync(block);
-            await LoadAsync();
+            await ReloadBlocksAsync(); // we already hold IsBusy; LoadAsync would no-op
         }
         catch (Exception ex)
         {
