@@ -31,10 +31,22 @@ public static class MauiProgram
 		// xlsx import; returns a Block the repository can persist.
 		builder.Services.AddSingleton<IBlockImporter, XlsxBlockImporter>();
 
+		// --- Services (Phase 4) ---
+		// Language reference (code -> locale/name/RTL) from Resources/Raw/languages.json.
+		builder.Services.AddSingleton<ILanguageCatalog, LanguageCatalog>();
+#if ANDROID
+		// Text-to-speech over Android's engine (with speech-rate control).
+		builder.Services.AddSingleton<ITtsService, Zubrilka.Platforms.Android.AndroidTtsService>();
+#endif
+
 		// --- UI (Phase 3): start screen page + view-model, resolved via DI. ---
 		// (The switch-box page/VM are created on demand with a specific block, not via DI.)
 		builder.Services.AddTransient<BlocksViewModel>();
 		builder.Services.AddTransient<BlocksPage>();
+
+		// --- UI (Phase 4): playback page + view-model. ---
+		builder.Services.AddTransient<PlaybackViewModel>();
+		builder.Services.AddTransient<PlaybackPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
