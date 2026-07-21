@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Zubrilka.Views.FontSettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Zubrilka.ViewModels"
+    x:DataType="vm:FontSettingsViewModel"
+    Title="Font size">
+
+    <Grid Padding="16" RowSpacing="16" RowDefinitions="Auto,*,Auto,Auto">
+
+        <Label
+            Grid.Row="0"
+            Text="Preview of a phrase at the current size:"
+            FontSize="15"
+            Opacity="0.8" />
+
+        <!-- Preview area, sized like a playback pane. -->
+        <Border
+            Grid.Row="1"
+            Padding="12"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 10">
+            <Label
+                Text="{Binding SampleText}"
+                FontSize="{Binding FontSize}"
+                LineBreakMode="WordWrap"
+                HorizontalTextAlignment="Center"
+                VerticalTextAlignment="Center" />
+        </Border>
+
+        <!-- Current numeric value. -->
+        <Label
+            Grid.Row="2"
+            Text="{Binding FontSize, StringFormat='Size: {0:0}'}"
+            FontSize="16"
+            HorizontalOptions="Center" />
+
+        <!-- Smaller / larger -->
+        <Grid Grid.Row="3" ColumnSpacing="12" ColumnDefinitions="*,*">
+            <Button Grid.Column="0" Text="A −" FontSize="18" Command="{Binding DecreaseCommand}" />
+            <Button Grid.Column="1" Text="A +" FontSize="22" Command="{Binding IncreaseCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>

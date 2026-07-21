@@ -13,20 +13,40 @@ flashcards with multilingual, on-device text-to-speech (offline).
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1 | Foundation: project, models, SQLite, repositories | ✅ done |
-| 2 | Import from `.xlsx` (ClosedXML) | ⬜ planned |
-| 3 | Start screen + switch-box (language selection) | ⬜ planned |
-| 4 | Playback engine + Android TextToSpeech | ⬜ planned |
-| 5 | Settings screens (font, speed, pauses) | ⬜ planned |
+| 2 | Import from `.xlsx` (ClosedXML) | ✅ done |
+| 3 | Start screen + switch-box (language selection) | ✅ done |
+| 4 | Playback engine + Android TextToSpeech | ✅ done |
+| 5 | Settings screens (font, speed, pauses) | ✅ done |
 | 6 | Improvements | ⬜ planned |
 
 ## Project structure
 
 ```
-Models/     Data classes: Block, Card, AppSettings
-Data/       SQLite: AppDatabase + repositories (Block/Card/Settings)
-Platforms/  Android-specific host code
-Resources/  Fonts, images, styles, icons
+Models/      Data classes: Block, Card, AppSettings
+Data/        SQLite: AppDatabase + repositories (Block/Card/Settings)
+Services/    xlsx import, language catalog, TTS abstraction
+ViewModels/  MVVM logic for every screen
+Views/       XAML screens (blocks list, switch-box, playback, settings)
+Behaviors/   Tap/long-press gesture, phrase font auto-shrink
+Converters/  Small XAML value converters
+Platforms/   Android-specific host code + TextToSpeech implementation
+Resources/   Fonts, images, styles, icons, languages.json
 ```
+
+## Import file format
+
+One `.xlsx` file = one block. Row 1 holds the language codes (column headers),
+each following row is one card:
+
+| he | ru | en |
+|----|----|----|
+| מתי הלו"ז שלנו להיום? | Какое у нас расписание? | What is our schedule? |
+
+Use ISO 639-1 codes as headers (`he`, `ru`, `en`, `de`, `fr`, `bg`, …). They are
+mapped to speech locales and text direction in
+[`Resources/Raw/languages.json`](Resources/Raw/languages.json); extend that file
+to add languages. Playback needs the matching Android voice installed
+(Settings → System → Languages & input → Text-to-speech output).
 
 ## Prerequisites (per machine)
 

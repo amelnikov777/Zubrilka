@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Zubrilka.ViewModels;
 
 namespace Zubrilka.Views;
@@ -27,11 +28,18 @@ public partial class BlocksPage : ContentPage
         await Navigation.PushModalAsync(new BlockSetupPage(setupViewModel));
     }
 
-    // [Phase 5] Font settings screen — stubbed until then.
+    // Opens the font-size settings screen.
     private async void OnFontClicked(object? sender, EventArgs e)
-        => await DisplayAlertAsync("Font size", "Font settings arrive in Phase 5.", "OK");
+        => await PushAsync<FontSettingsPage>();
 
-    // [Phase 5] Speed/pauses settings screen — stubbed until then.
+    // Opens the speech-speed / pause settings screen.
     private async void OnSpeedClicked(object? sender, EventArgs e)
-        => await DisplayAlertAsync("Speed & pauses", "Speed/pause settings arrive in Phase 5.", "OK");
+        => await PushAsync<SpeedSettingsPage>();
+
+    // Resolves a page from DI and pushes it onto the navigation stack.
+    private static Task PushAsync<TPage>() where TPage : Page
+    {
+        var page = IPlatformApplication.Current!.Services.GetRequiredService<TPage>();
+        return Shell.Current.Navigation.PushAsync(page);
+    }
 }

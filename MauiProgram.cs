@@ -48,6 +48,12 @@ public static class MauiProgram
 		builder.Services.AddTransient<PlaybackViewModel>();
 		builder.Services.AddTransient<PlaybackPage>();
 
+		// --- UI (Phase 5): settings screens. ---
+		builder.Services.AddTransient<FontSettingsViewModel>();
+		builder.Services.AddTransient<FontSettingsPage>();
+		builder.Services.AddTransient<SpeedSettingsViewModel>();
+		builder.Services.AddTransient<SpeedSettingsPage>();
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif

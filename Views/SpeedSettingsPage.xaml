@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Zubrilka.Views.SpeedSettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Zubrilka.ViewModels"
+    x:DataType="vm:SpeedSettingsViewModel"
+    Title="Speed &amp; pauses">
+
+    <VerticalStackLayout Padding="16" Spacing="24">
+
+        <!-- Speech rate, ±5% steps -->
+        <VerticalStackLayout Spacing="8">
+            <Label Text="Speech speed" FontSize="18" FontAttributes="Bold" />
+            <Label
+                Text="100% is the device's normal speaking rate."
+                FontSize="13"
+                Opacity="0.7" />
+            <Grid ColumnSpacing="12" ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0" Text="−5%" WidthRequest="90" Command="{Binding DecreaseSpeedCommand}" />
+                <Label
+                    Grid.Column="1"
+                    Text="{Binding SpeedText}"
+                    FontSize="24"
+                    HorizontalTextAlignment="Center"
+                    VerticalTextAlignment="Center" />
+                <Button Grid.Column="2" Text="+5%" WidthRequest="90" Command="{Binding IncreaseSpeedCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Pause between phrases, ±1s steps -->
+        <VerticalStackLayout Spacing="8">
+            <Label Text="Pause between phrases" FontSize="18" FontAttributes="Bold" />
+            <Label
+                Text="Silence after each spoken phrase."
+                FontSize="13"
+                Opacity="0.7" />
+            <Grid ColumnSpacing="12" ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0" Text="−1s" WidthRequest="90" Command="{Binding DecreasePauseCommand}" />
+                <Label
+                    Grid.Column="1"
+                    Text="{Binding PauseText}"
+                    FontSize="24"
+                    HorizontalTextAlignment="Center"
+                    VerticalTextAlignment="Center" />
+                <Button Grid.Column="2" Text="+1s" WidthRequest="90" Command="{Binding IncreasePauseCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <Label
+            Text="Changes are saved automatically and apply the next time you start playback."
+            FontSize="13"
+            Opacity="0.7" />
+    </VerticalStackLayout>
+</ContentPage>
