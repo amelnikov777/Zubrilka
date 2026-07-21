@@ -14,6 +14,10 @@ public interface IBlockRepository
     // Insert a new block or update an existing one; returns the block's id.
     Task<int> SaveAsync(Block block);
 
+    // Save a block together with the cards in Block.Cards, atomically.
+    // Used by import: replaces any existing cards of the block. Returns the block's id.
+    Task<int> SaveBlockWithCardsAsync(Block block);
+
     // Delete a block together with all of its cards.
     Task DeleteAsync(Block block);
 }
@@ -59,6 +63,38 @@ public class BlockRepository : IBlockRepository
         else
             // Existing block: overwrite its row.
             await connection.UpdateAsync(block);
+
+        return block.Id;
+    }
+
+    public async Task<int> SaveBlockWithCardsAsync(Block block)
+    {
+        var connection = await _database.GetConnectionAsync();
+
+        // One transaction so a block and its cards are never half-written.
+        // The callback uses the synchronous connection sqlite-net hands us.
+        await connection.RunInTransactionAsync(transaction =>
+        {
+            if (block.Id == 0)
+            {
+                // New block: Insert assigns its auto-increment id.
+                transaction.Insert(block);
+            }
+            else
+            {
+                // Existing block (re-import): update its row and drop old cards first.
+                transaction.Update(block);
+                transaction.Execute("DELETE FROM Cards WHERE BlockId = ?", block.Id);
+            }
+
+            foreach (var card in block.Cards)
+            {
+                // Point each card at the (now known) block id and force a fresh insert.
+                card.BlockId = block.Id;
+                card.Id = 0;
+                transaction.Insert(card);
+            }
+        });
 
         return block.Id;
     }

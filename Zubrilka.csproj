@@ -69,6 +69,8 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<!-- Reads .xlsx flashcard files during import (Phase 2). -->
+		<PackageReference Include="ClosedXML" Version="0.105.0" />
 		<!-- Local storage: lightweight ORM over SQLite (async API used by our repositories). -->
 		<PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
 		<!-- Native SQLite provider bundled for Android so no system SQLite dependency is needed.

@@ -1,0 +1,28 @@
+{
+  "note": "Language reference for Zubrilka. Use the ISO 639-1 code as the column header in your .xlsx files (row 1). 'locale' is the BCP-47 tag passed to Android TextToSpeech; 'rtl' marks right-to-left scripts (affects text display). Add or edit entries freely — the importer stores whatever header you use, and the app matches it against this table case-insensitively, accepting either the short code (he) or the full locale (he-IL).",
+  "languages": {
+    "he": { "name": "Hebrew",     "locale": "he-IL", "rtl": true  },
+    "ru": { "name": "Russian",    "locale": "ru-RU", "rtl": false },
+    "en": { "name": "English",    "locale": "en-US", "rtl": false },
+    "de": { "name": "German",     "locale": "de-DE", "rtl": false },
+    "fr": { "name": "French",     "locale": "fr-FR", "rtl": false },
+    "bg": { "name": "Bulgarian",  "locale": "bg-BG", "rtl": false },
+    "es": { "name": "Spanish",    "locale": "es-ES", "rtl": false },
+    "it": { "name": "Italian",    "locale": "it-IT", "rtl": false },
+    "pt": { "name": "Portuguese", "locale": "pt-PT", "rtl": false },
+    "uk": { "name": "Ukrainian",  "locale": "uk-UA", "rtl": false },
+    "pl": { "name": "Polish",     "locale": "pl-PL", "rtl": false },
+    "nl": { "name": "Dutch",      "locale": "nl-NL", "rtl": false },
+    "cs": { "name": "Czech",      "locale": "cs-CZ", "rtl": false },
+    "ro": { "name": "Romanian",   "locale": "ro-RO", "rtl": false },
+    "el": { "name": "Greek",      "locale": "el-GR", "rtl": false },
+    "sv": { "name": "Swedish",    "locale": "sv-SE", "rtl": false },
+    "tr": { "name": "Turkish",    "locale": "tr-TR", "rtl": false },
+    "ar": { "name": "Arabic",     "locale": "ar-SA", "rtl": true  },
+    "fa": { "name": "Persian",    "locale": "fa-IR", "rtl": true  },
+    "ja": { "name": "Japanese",   "locale": "ja-JP", "rtl": false },
+    "ko": { "name": "Korean",     "locale": "ko-KR", "rtl": false },
+    "zh": { "name": "Chinese",    "locale": "zh-CN", "rtl": false },
+    "hi": { "name": "Hindi",      "locale": "hi-IN", "rtl": false }
+  }
+}

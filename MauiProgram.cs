@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Zubrilka.Data;
+using Zubrilka.Services;
 
 namespace Zubrilka;
 
@@ -23,6 +24,10 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ICardRepository, CardRepository>();
 		builder.Services.AddSingleton<IBlockRepository, BlockRepository>();
 		builder.Services.AddSingleton<ISettingsRepository, SettingsRepository>();
+
+		// --- Services (Phase 2) ---
+		// xlsx import; returns a Block the repository can persist.
+		builder.Services.AddSingleton<IBlockImporter, XlsxBlockImporter>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
