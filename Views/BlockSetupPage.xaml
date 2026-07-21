@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Zubrilka.Views.BlockSetupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Zubrilka.ViewModels"
+    x:Name="Page"
+    x:DataType="vm:BlockSetupViewModel"
+    Title="{Binding Title}">
+
+    <Grid Padding="16" RowSpacing="12" RowDefinitions="Auto,*,Auto,Auto">
+
+        <!-- Instructions -->
+        <Label
+            Grid.Row="0"
+            Text="Choose languages, order (▲▼), and repeats:"
+            FontSize="15"
+            Opacity="0.8" />
+
+        <!-- Language rows: checkbox + code + reorder buttons -->
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Languages}"
+            SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:LanguageChoice">
+                    <Grid Padding="0,6" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding Code}"
+                            FontSize="18"
+                            VerticalOptions="Center" />
+                        <Button
+                            Grid.Column="2"
+                            Text="▲"
+                            WidthRequest="48"
+                            Command="{Binding MoveUpCommand}"
+                            CommandParameter="{Binding .}" />
+                        <Button
+                            Grid.Column="3"
+                            Text="▼"
+                            WidthRequest="48"
+                            Command="{Binding MoveDownCommand}"
+                            CommandParameter="{Binding .}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Repeat count stepper -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+            <Label Grid.Column="0" Text="Repeats per card" VerticalOptions="Center" FontSize="16" />
+            <Button Grid.Column="1" Text="−" WidthRequest="48" Command="{Binding DecreaseRepeatCommand}" />
+            <Label Grid.Column="2" Text="{Binding RepeatCount}" FontSize="18" WidthRequest="32"
+                   HorizontalTextAlignment="Center" VerticalOptions="Center" />
+            <Button Grid.Column="3" Text="+" WidthRequest="48" Command="{Binding IncreaseRepeatCommand}" />
+        </Grid>
+
+        <!-- Actions -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0" Text="Cancel" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Text="▶ Play" Command="{Binding PlayCommand}" />
+        </Grid>
+    </Grid>
+</ContentPage>

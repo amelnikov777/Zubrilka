@@ -73,3 +73,6 @@ desktop.ini
 
 # Claude Code local (per-machine) settings — not shared across machines
 .claude/settings.local.json
+
+# Local sample/import data (personal phrase files) placed in the project root — not shared
+/*.xlsx

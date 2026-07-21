@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Zubrilka.Data;
 using Zubrilka.Services;
+using Zubrilka.ViewModels;
+using Zubrilka.Views;
 
 namespace Zubrilka;
 
@@ -28,6 +30,11 @@ public static class MauiProgram
 		// --- Services (Phase 2) ---
 		// xlsx import; returns a Block the repository can persist.
 		builder.Services.AddSingleton<IBlockImporter, XlsxBlockImporter>();
+
+		// --- UI (Phase 3): start screen page + view-model, resolved via DI. ---
+		// (The switch-box page/VM are created on demand with a specific block, not via DI.)
+		builder.Services.AddTransient<BlocksViewModel>();
+		builder.Services.AddTransient<BlocksPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

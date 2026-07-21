@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Zubrilka.Views.BlocksPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:b="clr-namespace:Zubrilka.Behaviors"
+    xmlns:vm="clr-namespace:Zubrilka.ViewModels"
+    x:Name="Page"
+    x:DataType="vm:BlocksViewModel"
+    Title="Zubrilka">
+
+    <!-- Top bar actions. Font and Speed/Pauses screens arrive in Phase 5 (stubbed for now). -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Import" Command="{Binding ImportCommand}" />
+        <ToolbarItem Text="Font" Clicked="OnFontClicked" />
+        <ToolbarItem Text="Speed" Clicked="OnSpeedClicked" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <!-- The list of blocks, alphabetical by name (sorting done in the repository). -->
+        <CollectionView
+            ItemsSource="{Binding Blocks}"
+            SelectionMode="None">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="24" VerticalOptions="Center" Spacing="8">
+                    <Label
+                        Text="No blocks yet"
+                        FontSize="20"
+                        HorizontalOptions="Center" />
+                    <Label
+                        Text="Tap Import to add an .xlsx file."
+                        HorizontalOptions="Center"
+                        Opacity="0.7" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:BlockListItem">
+                    <!-- Each row: tap = open switch-box, long-press = delete. -->
+                    <Border
+                        Margin="12,6"
+                        Padding="16,12"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12">
+                        <Border.Behaviors>
+                            <b:TapAndHoldBehavior
+                                CommandParameter="{Binding .}"
+                                TapCommand="{Binding OpenCommand}"
+                                LongPressCommand="{Binding DeleteCommand}" />
+                        </Border.Behaviors>
+
+                        <VerticalStackLayout Spacing="2">
+                            <Label
+                                Text="{Binding Name}"
+                                FontSize="18"
+                                FontAttributes="Bold" />
+                            <Label
+                                Text="{Binding Subtitle}"
+                                FontSize="13"
+                                Opacity="0.7" />
+                            <Label
+                                Text="{Binding LanguagesText}"
+                                FontSize="13"
+                                Opacity="0.9" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Busy overlay shown during import/load. -->
+        <ActivityIndicator
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"
+            HorizontalOptions="Center"
+            VerticalOptions="Center" />
+    </Grid>
+</ContentPage>
