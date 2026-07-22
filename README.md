@@ -17,7 +17,14 @@ flashcards with multilingual, on-device text-to-speech (offline).
 | 3 | Start screen + switch-box (language selection) | ✅ done |
 | 4 | Playback engine + Android TextToSpeech | ✅ done |
 | 5 | Settings screens (font, speed, pauses) | ✅ done |
-| 6 | Improvements | ⬜ planned |
+| 6 | Improvements | 🔄 in progress |
+
+### Planned improvements
+
+- **Voice selection** — let the user pick among the device's installed voices for each
+  language (Android usually offers several per locale) and remember it per block.
+- Direct import from Google Sheets, card editing, and export back to `.xlsx`
+  (all marked `[FUTURE]` in the code).
 
 ## Project structure
 

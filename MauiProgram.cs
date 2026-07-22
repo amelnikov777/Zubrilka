@@ -37,6 +37,8 @@ public static class MauiProgram
 #if ANDROID
 		// Text-to-speech over Android's engine (with speech-rate control).
 		builder.Services.AddSingleton<ITtsService, Zubrilka.Platforms.Android.AndroidTtsService>();
+		// Foreground service that keeps playback alive in the background (Phase 6).
+		builder.Services.AddSingleton<IPlaybackKeepAlive, Zubrilka.Platforms.Android.AndroidPlaybackKeepAlive>();
 #endif
 
 		// --- UI (Phase 3): start screen page + view-model, resolved via DI. ---

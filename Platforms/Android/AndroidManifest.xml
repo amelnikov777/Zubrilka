@@ -3,4 +3,10 @@
 	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- Keep phrase playback running when the app is backgrounded or the screen is off. -->
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<!-- Android 13+: needed to show the ongoing playback notification. -->
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

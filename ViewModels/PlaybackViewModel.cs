@@ -18,17 +18,20 @@ public partial class PlaybackViewModel : ObservableObject
     private readonly ILanguageCatalog _catalog;
     private readonly ISettingsRepository _settingsRepository;
     private readonly ICardRepository _cardRepository;
+    private readonly IPlaybackKeepAlive _keepAlive;
 
     public PlaybackViewModel(
         ITtsService tts,
         ILanguageCatalog catalog,
         ISettingsRepository settingsRepository,
-        ICardRepository cardRepository)
+        ICardRepository cardRepository,
+        IPlaybackKeepAlive keepAlive)
     {
         _tts = tts;
         _catalog = catalog;
         _settingsRepository = settingsRepository;
         _cardRepository = cardRepository;
+        _keepAlive = keepAlive;
     }
 
     private Block _block = null!;
@@ -64,15 +67,18 @@ public partial class PlaybackViewModel : ObservableObject
     // Raised when the user exits, asking the View to leave the playback page.
     public event Action? ExitRequested;
 
-    /// <summary>Supplies the block to play. Cards are loaded lazily in <see cref="StartAsync"/>.</summary>
+    /// <summary>Supplies the block to play. Cards are loaded lazily in <see cref="PrepareAsync"/>.</summary>
     public void Initialize(Block block)
     {
         _block = block;
         OnPropertyChanged(nameof(Title));
     }
 
-    /// <summary>Prepares panes/settings, warns about missing voices, then starts the loop.</summary>
-    public async Task StartAsync()
+    /// <summary>
+    /// Loads settings, builds <see cref="Panes"/>, warns about missing voices and prepares the
+    /// shuffled cards. The View lays out its panes from this list, then calls <see cref="StartLoop"/>.
+    /// </summary>
+    public async Task PrepareAsync()
     {
         await _catalog.EnsureLoadedAsync();
         var ttsReady = await _tts.InitializeAsync();
@@ -112,11 +118,27 @@ public partial class PlaybackViewModel : ObservableObject
                 "OK");
         }
 
+        // Android 13+ needs this granted for the background-playback notification to appear.
+        // Playback still works if it's denied, so failures here are ignored.
+        try { await Permissions.RequestAsync<Permissions.PostNotifications>(); }
+        catch { /* permission API unavailable or refused */ }
+
         // Load the block's cards and shuffle them once for this session.
         _cards = await _cardRepository.GetByBlockIdAsync(_block.Id);
         Shuffle(_cards);
+    }
 
-        // Kick off the loop; it runs until Exit cancels the token.
+    /// <summary>Starts the playback loop. Called once the View has built its pane layout.</summary>
+    public void StartLoop()
+    {
+        // Phrases are read passively, so don't let the idle timer blank the screen.
+        try { DeviceDisplay.Current.KeepScreenOn = true; }
+        catch { /* not critical if the platform refuses */ }
+
+        // Keep the process alive if the user switches apps or presses the power button.
+        _keepAlive.Start();
+
+        // Runs until Exit cancels the token.
         _loopTask = RunAsync(_exitCts.Token);
     }
 
@@ -126,6 +148,11 @@ public partial class PlaybackViewModel : ObservableObject
         if (!_exitCts.IsCancellationRequested)
             _exitCts.Cancel();
         _tts.Stop();
+
+        // Let the screen time out normally again and drop the background keep-alive.
+        try { DeviceDisplay.Current.KeepScreenOn = false; }
+        catch { /* not critical */ }
+        _keepAlive.Stop();
 
         // Release a pause wait so the loop can observe cancellation and finish.
         _pauseGate?.TrySetResult(true);

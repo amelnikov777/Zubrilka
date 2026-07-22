@@ -26,3 +26,8 @@ public interface ITtsService
     /// <summary>Stops any current speech right away.</summary>
     void Stop();
 }
+
+// [FUTURE] Voice picking: Android often ships several voices per locale
+// (TextToSpeech.Voices / getVoices()). Expose them here (e.g. GetVoices(localeTag) plus a
+// voice id on SpeakAsync), let the user choose one per language in the block's switch-box,
+// and remember the choice on Block alongside SelectedLanguages.
