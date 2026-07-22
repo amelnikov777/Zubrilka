@@ -13,4 +13,14 @@ public interface IPlaybackKeepAlive
 
     /// <summary>Stops keeping the app alive.</summary>
     void Stop();
+
+    /// <summary>
+    /// True when the system already lets this app run without battery restrictions.
+    /// Aggressive vendor skins (MIUI in particular) suspend background work otherwise,
+    /// which silences playback once the screen goes off.
+    /// </summary>
+    bool IsBackgroundUnrestricted { get; }
+
+    /// <summary>Opens the system dialog asking to exempt the app from battery optimisation.</summary>
+    void RequestBackgroundUnrestricted();
 }

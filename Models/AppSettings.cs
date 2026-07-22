@@ -24,4 +24,9 @@ public class AppSettings
 
     // Pause after each spoken phrase, in seconds. Adjusted in ±1s steps.
     public double PauseSeconds { get; set; } = 1;
+
+    // Whether we already offered to exempt the app from battery optimisation.
+    // Keeps the prompt to a single appearance instead of every playback.
+    // (sqlite-net adds this column automatically to an existing database.)
+    public bool BatteryPromptShown { get; set; }
 }

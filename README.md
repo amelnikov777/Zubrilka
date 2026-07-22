@@ -82,6 +82,22 @@ This project builds from a plain .NET SDK — no Visual Studio required.
 dotnet build Zubrilka.csproj -c Debug
 ```
 
+## Background playback on Xiaomi (MIUI / HyperOS)
+
+Playback runs in a foreground service with a wake lock, and the app offers to turn off
+battery optimisation the first time you press Play. Xiaomi still needs a few switches that
+no app can set for itself — do these once, or playback stops a minute after the screen
+turns off:
+
+1. **Settings → Apps → Zubrilka → Battery saver → No restrictions**
+2. **Settings → Apps → Zubrilka → Autostart → on**
+3. **Recents (task switcher) → swipe down on Zubrilka → padlock**, so cleaning recents
+   doesn't kill it
+4. Accept the "run without battery restrictions" prompt the app shows on first playback
+
+Wording moves between MIUI versions; the entries are usually under Settings → Apps →
+Manage apps → Zubrilka, and Autostart may live in the Security app.
+
 ## Working across two machines
 
 1. `git pull` before you start, `git push` when you finish.

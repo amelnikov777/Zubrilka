@@ -9,4 +9,7 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<!-- Android 13+: needed to show the ongoing playback notification. -->
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+	<!-- Lets the app ask to be exempted from battery optimisation, which vendor skins
+	     (MIUI especially) otherwise use to suspend background playback. -->
+	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 </manifest>

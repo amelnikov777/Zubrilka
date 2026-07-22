@@ -123,9 +123,36 @@ public partial class PlaybackViewModel : ObservableObject
         try { await Permissions.RequestAsync<Permissions.PostNotifications>(); }
         catch { /* permission API unavailable or refused */ }
 
+        await OfferBackgroundExemptionAsync(settings);
+
         // Load the block's cards and shuffle them once for this session.
         _cards = await _cardRepository.GetByBlockIdAsync(_block.Id);
         Shuffle(_cards);
+    }
+
+    /// <summary>
+    /// Once ever, offers to exempt the app from battery optimisation. Without it, aggressive
+    /// vendor skins (MIUI/HyperOS above all) suspend the process and playback goes silent
+    /// shortly after the screen turns off, despite the foreground service.
+    /// </summary>
+    private async Task OfferBackgroundExemptionAsync(AppSettings settings)
+    {
+        if (settings.BatteryPromptShown || _keepAlive.IsBackgroundUnrestricted)
+            return;
+
+        // Remember that we asked, whatever the answer, so this appears only once.
+        settings.BatteryPromptShown = true;
+        await _settingsRepository.SaveAsync(settings);
+
+        var openSettings = await Shell.Current.DisplayAlertAsync(
+            "Keep playing in the background",
+            "Android may stop playback shortly after the screen turns off.\n\n" +
+            "Allow Zubrilka to run without battery restrictions?",
+            "Open settings",
+            "Later");
+
+        if (openSettings)
+            _keepAlive.RequestBackgroundUnrestricted();
     }
 
     /// <summary>Starts the playback loop. Called once the View has built its pane layout.</summary>
