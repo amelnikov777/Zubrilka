@@ -89,14 +89,19 @@ battery optimisation the first time you press Play. Xiaomi still needs a few swi
 no app can set for itself — do these once, or playback stops a minute after the screen
 turns off:
 
-1. **Settings → Apps → Zubrilka → Battery saver → No restrictions**
-2. **Settings → Apps → Zubrilka → Autostart → on**
-3. **Recents (task switcher) → swipe down on Zubrilka → padlock**, so cleaning recents
-   doesn't kill it
-4. Accept the "run without battery restrictions" prompt the app shows on first playback
+1. **Settings → Apps → Manage apps → Zubrilka → Battery saver → No restrictions**
+2. **Settings → Apps → Manage apps → Zubrilka → Background autostart → on**
+   (the screen listing every app is `Background autostart`; Autostart may also live in
+   the Security app)
+3. Accept the "run without battery restrictions" prompt the app shows on first playback
 
-Wording moves between MIUI versions; the entries are usually under Settings → Apps →
-Manage apps → Zubrilka, and Autostart may live in the Security app.
+Wording moves between MIUI versions. Older MIUI also let you lock an app's card in
+Recents so "clear all" could not kill it; HyperOS dropped that, and it is not needed —
+just don't swipe the Zubrilka card away while playback runs.
+
+You can tell the foreground service is alive by the ongoing **"Zubrilka — Playing
+phrases"** notification in the shade. It appears whether or not `POST_NOTIFICATIONS` was
+granted: Android exempts foreground-service notifications from that permission.
 
 ## Working across two machines
 

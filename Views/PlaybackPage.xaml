@@ -14,9 +14,11 @@
 
         <Grid x:Name="PanesGrid" Grid.Row="0" Padding="6,0,6,0" />
 
+        <!-- Pause sits on the right: it is the button used most, and the right half is the
+             easier thumb reach. -->
         <Grid Grid.Row="1" Padding="12" ColumnSpacing="12" ColumnDefinitions="*,*">
-            <Button Grid.Column="0" Text="{Binding PauseButtonText}" Command="{Binding TogglePauseCommand}" />
-            <Button Grid.Column="1" Text="Exit" Command="{Binding ExitCommand}" />
+            <Button Grid.Column="0" Text="Exit" Command="{Binding ExitCommand}" />
+            <Button Grid.Column="1" Text="{Binding PauseButtonText}" Command="{Binding TogglePauseCommand}" />
         </Grid>
     </Grid>
 </ContentPage>
